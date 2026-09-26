@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#07130f" />
+  <title>HU Poker Lab — Heads-Up vs Bot</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div>
+        <div class="eyebrow">HEADS-UP NO-LIMIT HOLD'EM</div>
+        <h1>HU Poker Lab</h1>
+      </div>
+      <div class="top-actions">
+        <label>Stack
+          <select id="stack-depth">
+            <option value="20">20 BB</option>
+            <option value="50">50 BB</option>
+            <option value="100" selected>100 BB</option>
+          </select>
+        </label>
+        <button id="new-match" class="ghost">New match</button>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="table-wrap">
+        <div class="poker-table">
+          <div class="seat bot-seat">
+            <div class="seat-head">
+              <div><strong>BOT</strong> <span id="bot-position" class="pill"></span></div>
+              <span id="bot-stack">100 BB</span>
+            </div>
+            <div id="bot-cards" class="cards"></div>
+            <div id="bot-status" class="subtle">Waiting</div>
+          </div>
+
+          <div class="center-table">
+            <div id="street-label" class="street">READY</div>
+            <div class="pot">Pot <strong id="pot">0</strong></div>
+            <div id="board" class="cards board"></div>
+            <div id="result-banner" class="result-banner">Start a hand to play</div>
+          </div>
+
+          <div class="seat hero-seat">
+            <div class="seat-head">
+              <div><strong>YOU</strong> <span id="hero-position" class="pill"></span></div>
+              <span id="hero-stack">100 BB</span>
+            </div>
+            <div id="hero-cards" class="cards"></div>
+            <div id="hero-status" class="subtle">Ready</div>
+          </div>
+        </div>
+
+        <div class="action-panel">
+          <button id="deal" class="primary">Deal hand</button>
+          <div id="action-buttons" class="action-buttons"></div>
+          <div class="shortcut-note">Keyboard: F fold · C check/call · H ½-pot · P pot · A all-in</div>
+        </div>
+      </section>
+
+      <aside class="coach-panel">
+        <div class="panel-head">
+          <div>
+            <div class="eyebrow">POST-ACTION REVIEW</div>
+            <h2>GTO Coach</h2>
+          </div>
+          <div id="session-score" class="score-orb">—</div>
+        </div>
+        <div class="notice">GTO-inspired training estimate, not an exact solver. Equity is Monte Carlo vs an unknown range.</div>
+        <div id="coach-empty" class="empty-state">Make a decision. Your review appears here after you act.</div>
+        <div id="coach" class="coach-content hidden">
+          <div class="grade-row"><span id="grade" class="grade">—</span><span id="decision-score">—</span></div>
+          <div class="metrics">
+            <div><span>Equity</span><strong id="equity">—</strong></div>
+            <div><span>Pot odds</span><strong id="pot-odds">—</strong></div>
+            <div><span>SPR</span><strong id="spr">—</strong></div>
+          </div>
+          <h3>Suggested mix</h3>
+          <div id="mix" class="mix"></div>
+        </div>
+
+        <div class="history-head"><h3>Decision history</h3><span id="decision-count">0 decisions</span></div>
+        <div id="history" class="history"></div>
+      </aside>
+    </main>
+
+    <footer>Training chips only · Blinds 1/2 · No account, server, or real-money wagering.</footer>
+  </div>
+  <script type="module" src="./src/app.js"></script>
+</body>
+</html>
