@@ -1,95 +1,52 @@
 <!doctype html>
-<html lang="en">
+<html lang="th">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="theme-color" content="#07130f" />
-  <title>HU Poker Lab — Heads-Up vs Bot</title>
-  <link rel="stylesheet" href="./styles.css" />
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#0c131c"><meta name="description" content="ฝึกอ่านตำแหน่ง 6-max คิดเป็น BB และวางแผน Pot เล่นกับบอทด้วยชิปฝึก ไม่ใช้เงินจริง">
+  <title>Poker Lab — 6-max Practice</title>
+  <link rel="stylesheet" href="./practice.css?v=2.0.0">
 </head>
 <body>
-  <div class="app-shell">
-    <header class="topbar">
-      <div>
-        <div class="eyebrow">HEADS-UP NO-LIMIT HOLD'EM</div>
-        <h1>HU Poker Lab</h1>
-      </div>
-      <div class="top-actions">
-        <label>Stack
-          <select id="stack-depth">
-            <option value="20">20 BB</option>
-            <option value="50">50 BB</option>
-            <option value="100" selected>100 BB</option>
-          </select>
-        </label>
-        <button id="new-match" class="ghost">New match</button>
-      </div>
-    </header>
-
+  <div class="shell">
+    <header class="masthead"><a class="brand" href="./"><span class="brand-icon">♠</span><span>POKER LAB<small>6-MAX PRACTICE</small></span></a><nav><span class="version">v2.0</span><a href="./hu.html">HU เดิม ↗</a></nav></header>
+    <section class="intro"><div><p class="eyebrow">อ่านสถานการณ์ → เลือกเอง → เล่นต่อ</p><h1>คิดเป็น BB. เล่นเป็นมือ.</h1><p>โต๊ะ 6 คน แต่ไม่ต้องเริ่มจากศูนย์ทุกมือ ฝึกตรงจังหวะที่คุณต้องตัดสินใจ</p></div><div class="rules">100 BB เริ่มต้น / คน<br><strong>SB 0.5 · BB 1</strong><br>ไม่มี ante · ไม่มี rake · ชิปฝึกเท่านั้น</div></section>
+    <section class="toolbar" aria-label="ตั้งค่าการฝึก">
+      <label>สถานการณ์<select id="scenario"><option value="mixed">ผสมทุกสถานการณ์</option></select></label>
+      <label>ตัวช่วย<select id="mode"><option value="learn">เรียนรู้ · เปิด BB Planner</option><option value="practice">คิดเอง · ซ่อนตัวช่วย</option><option value="shadow">ทดสอบ · รีวิวเมื่อจบมือ</option></select></label>
+      <button id="next" class="primary">โจทย์ถัดไป →</button><button id="replay" class="ghost">เล่นโจทย์นี้ซ้ำ</button>
+    </section>
+    <div id="error" role="alert" class="error" hidden></div>
     <main class="layout">
-      <section class="table-wrap">
-        <div class="poker-table">
-          <div class="seat bot-seat">
-            <div class="seat-head">
-              <div><strong>BOT</strong> <span id="bot-position" class="pill"></span></div>
-              <span id="bot-stack">100 BB</span>
-            </div>
-            <div id="bot-cards" class="cards"></div>
-            <div id="bot-status" class="subtle">Waiting</div>
-          </div>
-
-          <div class="center-table">
-            <div id="street-label" class="street">READY</div>
-            <div class="pot">Pot <strong id="pot">0</strong></div>
-            <div id="board" class="cards board"></div>
-            <div id="result-banner" class="result-banner">Start a hand to play</div>
-          </div>
-
-          <div class="seat hero-seat">
-            <div class="seat-head">
-              <div><strong>YOU</strong> <span id="hero-position" class="pill"></span></div>
-              <span id="hero-stack">100 BB</span>
-            </div>
-            <div id="hero-cards" class="cards"></div>
-            <div id="hero-status" class="subtle">Ready</div>
-          </div>
+      <section class="play-column">
+        <div class="spot-head"><div><span id="tag" class="eyebrow"></span><h2 id="spot-title"></h2></div><span id="seed-label" class="muted"></span></div>
+        <div id="table" class="table" aria-label="โต๊ะ 6 ที่นั่ง เรียง UTG HJ CO BTN SB BB">
+          <div class="felt"></div><div id="seats"></div>
+          <div class="table-center"><span id="street" class="eyebrow"></span><div class="center-pot"><small>เงินกองกลาง</small><strong id="table-pot"></strong></div><div id="board" class="cards"></div><span id="live-label" class="muted"></span></div>
         </div>
-
-        <div class="action-panel">
-          <button id="deal" class="primary">Deal hand</button>
-          <div id="action-buttons" class="action-buttons"></div>
-          <div class="shortcut-note">Keyboard: F fold · C check/call · H ½-pot · P pot · A all-in</div>
-        </div>
+        <section class="hero-dock"><div><span id="hero-position" class="eyebrow"></span><div id="hero-cards" class="cards"></div></div><div><strong id="hand-name"></strong><p id="turn-status" role="status" aria-live="polite"></p></div><button id="pause" class="ghost" title="หยุดบอทเพื่ออ่านข้อมูล">หยุดบอท</button></section>
+        <section class="numbers" aria-label="สถานการณ์ปัจจุบัน"><div><span id="pot-label">Pot รวม Bet ล่าสุด</span><strong id="pot"></strong></div><div><span>Stack เราเหลือ</span><strong id="stack"></strong></div><div><span>ต้อง Call เพิ่ม</span><strong id="call"></strong></div><div><span>ลงแล้วรอบนี้</span><strong id="invested"></strong></div></section>
+        <section class="decisions panel" aria-label="เลือกการเล่น">
+          <div class="panel-title"><h3>คุณจะเล่นอย่างไร?</h3><span id="waiting" class="muted"></span></div>
+          <div id="actions" class="actions"></div>
+          <div id="sizing" hidden><label for="raise-to">ยอดรวมในรอบนี้ — Raise to / Bet (BB)</label><div class="size-input"><input id="raise-to" type="number" step="0.01" inputmode="decimal" aria-describedby="size-note"><button id="choose-size">เลือกขนาดนี้</button></div><div id="presets" class="presets"></div><small id="size-note" class="muted"></small></div>
+          <div id="selection" class="selection">เลือก action ก่อน ยังไม่ลงชิปจนกดยืนยัน</div><div id="quick-plan" class="quick-plan" hidden></div><button id="confirm" class="primary confirm" disabled>ยืนยันการเล่น</button>
+          <div id="hand-result" class="result" hidden></div>
+        </section>
+        <details class="panel history-panel" open><summary>ประวัติแอ็กชัน — ก่อนถึงคุณและระหว่างมือ</summary><p class="muted">ยอด Raise to คือยอดรวมรอบนั้น · Call คือจ่ายเพิ่ม · ตำแหน่งเดิมยังคงอยู่แม้เหลือ 2 คน</p><div id="action-history" class="action-history"></div></details>
       </section>
-
-      <aside class="coach-panel">
-        <div class="panel-head">
-          <div>
-            <div class="eyebrow">POST-ACTION REVIEW</div>
-            <h2>GTO Coach</h2>
-          </div>
-          <div id="session-score" class="score-orb">—</div>
-        </div>
-        <div class="notice">GTO-inspired training estimate, not an exact solver. Equity is Monte Carlo vs an unknown range.</div>
-        <div id="coach-empty" class="empty-state">Make a decision. Your review appears here after you act.</div>
-        <div id="coach" class="coach-content hidden">
-          <div class="grade-row"><span id="grade" class="grade">—</span><span id="decision-score">—</span></div>
-          <div class="metrics">
-            <div><span>Equity</span><strong id="equity">—</strong></div>
-            <div><span>Pot odds</span><strong id="pot-odds">—</strong></div>
-            <div><span>SPR</span><strong id="spr">—</strong></div>
-          </div>
-          <h3>Suggested mix</h3>
-          <div id="mix" class="mix"></div>
-        </div>
-
-        <div class="history-head"><h3>Decision history</h3><span id="decision-count">0 decisions</span></div>
-        <div id="history" class="history"></div>
+      <aside class="learning-column">
+        <section class="panel planner-panel"><div class="panel-title"><div><p class="eyebrow">PLAN BEFORE YOU PLAY</p><h2>BB / Pot Planner</h2></div><span class="pill">คำนวณจริง</span></div><p class="muted">ช่วยนับเงิน ไม่เฉลยว่าควร Call หรือ Raise</p><button id="reveal" class="ghost" hidden>เปิดตัวช่วยเฉพาะจังหวะนี้</button><div id="planner"></div>
+          <div id="caller-control" hidden><label for="callers">สมมติว่าใครตาม (ไม่มีคน Raise)</label><select id="callers"></select></div><div id="conditional"></div>
+        </section>
+        <section class="panel" id="math-panel"><details id="math-details"><summary>ลองคิด Pot เองก่อนดูตัวเลข</summary><p id="math-question">เลือก Call หรือ Bet/Raise ก่อน</p><label for="math-answer">Pot ทันทีหลัง action ของคุณ (BB)</label><div class="size-input"><input id="math-answer" type="number" step="0.01" min="0" inputmode="decimal"><button id="math-check">ตรวจคำตอบ</button></div><p id="math-feedback" role="status"></p><small class="muted">นับก่อนคนอื่นตอบ และก่อนคืนส่วนเกินจาก All-in ไม่มีโบนัสความเร็ว</small></details></section>
+        <section class="panel review-panel"><p class="eyebrow">AFTER YOUR DECISION</p><h2>ทบทวนการเล่น</h2><div id="review">ตัดสินใจเองก่อน แล้วดูผลการคำนวณที่นี่</div><p class="disclosure">ไม่มีคะแนน GTO หรือ EV loss ในโหมดนี้ ยังไม่มีคำตอบจาก solver ที่ตรงกับโจทย์ การชนะมือหนึ่งไม่ได้แปลว่าเล่นถูกเสมอ</p></section>
+        <section class="panel"><div class="panel-title"><h2>การฝึกของคุณ</h2><button id="reset-progress" class="text-button">ล้างสถิติ</button></div><div class="progress-grid"><div><strong id="decisions-count">0</strong><span>การตัดสินใจ</span></div><div><strong id="hands-count">0</strong><span>มือที่จบ</span></div><div><strong id="math-count">—</strong><span>คำนวณถูก / ลอง</span></div></div><p id="save-status" class="muted">เก็บสถิติเฉพาะเบราว์เซอร์นี้ ไม่เก็บข้ามเครื่อง</p><details><summary>ทบทวนจังหวะล่าสุด</summary><div id="recent"></div></details></section>
+        <details class="panel glossary"><summary>ศัพท์ที่ใช้ · และข้อจำกัด</summary><p><b>BB</b> = หน่วยเดิมพันใหญ่ 1 BB; โหมดนี้คำนวณละเอียด 0.01 BB</p><p><b>Call</b> = ตามเฉพาะส่วนต่าง ไม่บวกเงินที่ลงแล้วซ้ำ</p><p><b>Raise to</b> = เพิ่มยอดรวมรอบนี้เป็นเท่าไร ไม่ใช่จำนวนที่จ่ายเพิ่ม</p><p><b>SPR</b> = Effective Stack / Pot; หลายคนและหลาย pot ต้องดูแยกคู่</p><p>ปุ่ม % เมื่อเจอ Bet คิดส่วนที่ Raise เพิ่มจาก Pot หลังสมมติ Call ก่อน แล้วปรับตามขั้นต่ำ</p><p>โจทย์ใช้ประวัติแอ็กชันที่กำหนดไว้และไพ่ตัวอย่าง บอทเล่นต่อด้วย heuristic ไม่ใช่ GTO solver ไม่อ่านไพ่คู่ต่อสู้ และไม่มีการประเมิน range แบบ solver</p><p>รุ่นนี้ไม่จับเวลา ไม่คิดเงิน และไม่ใช่โต๊ะ 6-max ต่อเนื่อง ทุกโจทย์เริ่มจาก Stack 100 BB แล้วเล่นต่อจนจบมือนั้น</p></details>
       </aside>
     </main>
-
-    <footer>Training chips only · Blinds 1/2 · 1 BB = 2 chips · No account, server, or real-money wagering.</footer>
+    <footer>ฝึกโดยไม่มีเงินจริง · ไม่มีบัญชีหรือการชำระเงิน · v2.0.0 <a href="./hu.html">โหมด Heads-Up เดิม</a></footer>
   </div>
-  <script type="module" src="./src/app.js"></script>
+  <noscript><p class="error">เกมต้องเปิด JavaScript กรุณาเปิดผ่าน Safari หรือ Chrome</p></noscript>
+  <script type="module" src="./src/practice/app.js?v=2.0.0"></script>
 </body>
 </html>

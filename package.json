@@ -1,4 +1,12 @@
 {
-  "name":"hu-poker-gto","version":"1.0.0","private":true,"type":"module",
-  "scripts":{"start":"node scripts/server.mjs","test":"node --test tests/*.test.mjs"}
+  "name": "hu-poker-gto",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node scripts/server.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "build": "node scripts/build.mjs",
+    "test:browser": "python scripts/browser-smoke.py"
+  }
 }
