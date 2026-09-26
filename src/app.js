@@ -9,7 +9,11 @@ let botThinking = false;
 let latestReview = null;
 const decisions = [];
 
-function bb(chips){ return `${(chips/game.bigBlind).toFixed(chips % game.bigBlind ? 1 : 0)} BB`; }
+function bb(chips){
+  const value = chips / game.bigBlind;
+  return `${Number.isInteger(value) ? value.toFixed(0) : value.toFixed(1)} BB`;
+}
+function amount(chips){ return `${chips} chips · ${bb(chips)}`; }
 function cardHtml(card, hidden=false){
   if (hidden) return '<div class="card back"></div>';
   const label = cardLabel(card);
@@ -17,13 +21,31 @@ function cardHtml(card, hidden=false){
 }
 function position(player){ return game.dealer===player ? 'BTN / SB' : 'BB'; }
 
+function actionLabel(a){
+  if(a.id==='fold') return 'Fold';
+  if(a.id==='check') return 'Check';
+  if(a.id==='call'){
+    const chips=Math.min(game.callAmount('hero'),game.players.hero.stack);
+    return `Call ${chips} · ${bb(chips)}`;
+  }
+  if(a.id==='allin'){
+    const target=game.players.hero.streetBet+game.players.hero.stack;
+    return `All-in to ${target} · ${bb(target)}`;
+  }
+  if(a.id==='half' || a.id==='pot'){
+    const verb=game.currentBet ? 'Raise to' : 'Bet';
+    return `${verb} ${a.target} · ${bb(a.target)}`;
+  }
+  return a.label;
+}
+
 function render(){
   const s = game.snapshot();
-  $('hero-stack').textContent = bb(s.players.hero.stack);
-  $('bot-stack').textContent = bb(s.players.bot.stack);
+  $('hero-stack').textContent = amount(s.players.hero.stack);
+  $('bot-stack').textContent = amount(s.players.bot.stack);
   $('hero-position').textContent = s.status==='idle' ? '' : position('hero');
   $('bot-position').textContent = s.status==='idle' ? '' : position('bot');
-  $('pot').textContent = s.pot ? `${s.pot} chips` : '0';
+  $('pot').textContent = s.pot ? amount(s.pot) : `0 chips · 0 BB`;
   $('street-label').textContent = s.status==='idle' ? 'READY' : s.street.toUpperCase();
   $('hero-cards').innerHTML = s.players.hero.hole.map(c=>cardHtml(c)).join('');
   const revealBot = s.status==='complete' && s.result?.type==='showdown';
@@ -35,9 +57,12 @@ function render(){
   if (s.status==='idle') $('result-banner').textContent='Start a hand to play';
   else if (s.status==='active') $('result-banner').textContent = s.toAct==='hero' ? 'Your turn' : 'Bot thinking…';
   else if (s.result?.winner==='tie') $('result-banner').textContent=`Split pot · ${s.result.heroHand || ''}`;
-  else if (s.result) $('result-banner').textContent=`${s.result.winner==='hero'?'You win':'Bot wins'} ${s.result.amount} chips${s.result.heroHand?` · ${s.result.heroHand} vs ${s.result.botHand}`:''}`;
+  else if (s.result) $('result-banner').textContent=`${s.result.winner==='hero'?'You win':'Bot wins'} ${amount(s.result.amount)}${s.result.heroHand?` · ${s.result.heroHand} vs ${s.result.botHand}`:''}`;
 
-  $('hero-status').textContent = s.status==='active' && s.toAct==='hero' ? `To call: ${game.callAmount('hero')}` : '';
+  if(s.status==='active' && s.toAct==='hero'){
+    const call=game.callAmount('hero');
+    $('hero-status').textContent = call ? `To call: ${amount(call)}` : `Check available · Pot ${bb(s.pot)}`;
+  } else $('hero-status').textContent = '';
   $('bot-status').textContent = botThinking ? 'Thinking…' : '';
   renderActions(); renderCoach();
 }
@@ -46,7 +71,7 @@ function renderActions(){
   const wrap=$('action-buttons'); wrap.innerHTML='';
   if(game.status!=='active' || game.toAct!=='hero') return;
   for(const a of game.legalActions('hero')){
-    const b=document.createElement('button'); b.textContent=a.label; b.dataset.action=a.id;
+    const b=document.createElement('button'); b.textContent=actionLabel(a); b.dataset.action=a.id;
     if(a.id==='fold') b.classList.add('danger');
     b.onclick=()=>heroAction(a.id); wrap.appendChild(b);
   }
@@ -73,7 +98,7 @@ function renderCoach(){
     $('spr').textContent=latestReview.analysis.spr.toFixed(1);
     $('mix').innerHTML=formatMix(latestReview.analysis).map(m=>`<div class="mix-row"><span>${m.label}</span><div class="bar"><i style="width:${m.percent}%"></i></div><strong>${m.percent}%</strong></div>`).join('');
   }
-  $('history').innerHTML=decisions.slice(0,12).map(d=>`<div class="history-item"><div><strong>${d.street.toUpperCase()} · ${d.action}</strong><br><small>Eq ${Math.round(d.analysis.equity*100)}% · Odds ${Math.round(d.analysis.potOdds*100)}%</small></div><span class="history-score">${d.scored.score}</span></div>`).join('');
+  $('history').innerHTML=decisions.slice(0,12).map(d=>`<div class="history-item"><div><strong>${d.street.toUpperCase()} · ${d.action}</strong><br><small>Eq ${Math.round(d.analysis.equity*100)}% · Odds ${Math.round(d.analysis.potOdds*100)}% · Pot ${bb(d.analysis.pot)} · Call ${bb(d.analysis.callAmount)}</small></div><span class="history-score">${d.scored.score}</span></div>`).join('');
 }
 
 function maybeBot(){
