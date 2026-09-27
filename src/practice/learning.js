@@ -1,12 +1,12 @@
 import { fmt, POSITIONS } from './engine.js';
 export const STORAGE_KEY='poker-lab.practice.v2';
-export const freshProgress=()=>({version:2,decisions:0,hands:0,mathTotal:0,mathCorrect:0,recent:[]});
+export const freshProgress=()=>({version:2,decisions:0,hands:0,skipped:0,mathTotal:0,mathCorrect:0,recent:[]});
 export function loadProgress(storage) {
   try {
     const p=JSON.parse(storage.getItem(STORAGE_KEY));
     if(!p || p.version!==2) return freshProgress();
     const out=freshProgress();
-    for(const k of ['decisions','hands','mathTotal','mathCorrect']) if(Number.isSafeInteger(p[k])&&p[k]>=0)out[k]=p[k];
+    for(const k of ['decisions','hands','skipped','mathTotal','mathCorrect']) if(Number.isSafeInteger(p[k])&&p[k]>=0)out[k]=p[k];
     out.mathCorrect=Math.min(out.mathCorrect,out.mathTotal);
     out.recent=Array.isArray(p.recent)?p.recent.filter(r=>r&&typeof r.scenario==='string'&&Number.isInteger(r.seed)&&typeof r.text==='string'&&r.text.length<1500&&POSITIONS.includes(r.position)).slice(0,30):[];
     return out;

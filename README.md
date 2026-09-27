@@ -1,6 +1,6 @@
-# Poker Lab — 6-max Practice v2.0
+# Poker Lab — 6-max Practice v2.1
 
-Practice poker decisions without real money. The main page is now a Thai-first
+Practice poker decisions without real money. The main page is a Thai-first
 six-max scenario trainer; the original heads-up game remains at `hu.html`.
 
 ## Play
@@ -19,14 +19,25 @@ or showdown. You can pause, skip to another scenario, or replay the same seed.
 - Multiway betting, short all-ins, reopening, uncalled refunds and side pots.
 - Learn / Think for yourself / Review after the hand; no compulsory timer.
 - Optional BB arithmetic exercise, local progress and recent-decision replay.
-- Mobile layout, including compact inline amount preview; no account or payments.
+- Mobile layout with an integrated decision dock; no account or payments.
 
-**Not a GTO solver.** The new trainer does not assign GTO grades, solver action
+**Not a GTO solver.** The trainer does not assign GTO grades, solver action
 frequencies or EV loss. Its feedback is arithmetic and context, not strategic
 correctness. Scenario prefixes and illustrative hand pools are authored fixtures,
 not solved ranges. Continuation bots use a lightweight heuristic and only their
 own cards plus public information. Legacy HU heuristic scores are explicitly
 labelled as a demonstration, not verified strategy grades.
+
+## New in v2.1
+
+BB arithmetic now sits beside action selection. Type a size to preview immediately,
+then use a single amount-labelled confirmation. All-in is separated from presets.
+Settings, full history and progress move into dialogs that pause the bot queue.
+The mobile layout keeps the community cards and decision controls close together;
+optional detail panels scroll on shorter screens. Quizzes hide their answers,
+Shadow hides in-hand feedback, and repeated taps cannot commit the next decision.
+Skipped hands are counted separately without erasing existing v2 progress.
+See [UX v2.1 details and acceptance scope](docs/UX-V2.1.md).
 
 ## Run locally
 
@@ -62,14 +73,16 @@ GitHub Actions (already enabled for this repository).
 
 ## Development entry points
 
-Read [the v2 specification and handoff](docs/PRACTICE-V2.md) before extending it.
+Read [the v2 specification and handoff](docs/PRACTICE-V2.md) and
+[the v2.1 UX change](docs/UX-V2.1.md) before extending it.
 
 - `src/practice/engine.js`: independent six-max rules and arithmetic projection.
 - `src/practice/scenarios.js`: replayable prefixes and continuation bot.
 - `src/practice/learning.js`: honest feedback, arithmetic exercises and storage.
-- `src/practice/app.js`, `index.html`, `practice.css`: new UI.
+- `src/practice/ux.js`: presentation, sizing and visibility helpers.
+- `src/practice/app.js`, `index.html`, `practice.css`: practice UI.
 - `src/game.js`, `src/app.js`, `hu.html`: preserved legacy HU implementation.
 - `tests/`, `scripts/browser-smoke.py`: regression and browser checks.
 
 Timed Snap, solver-backed strategy grading, adaptive leak detection and
-continuous six-max cash/tournament sessions are not implemented in v2.0.
+continuous six-max cash/tournament sessions are not implemented in v2.1.
