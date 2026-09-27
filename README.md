@@ -90,3 +90,5 @@ Read [the v2 specification and handoff](docs/PRACTICE-V2.md) and
 
 Timed Snap, solver-backed strategy grading, adaptive leak detection and
 continuous six-max cash/tournament sessions are not implemented in v2.1.
+
+The v2.2 card-face rendering is covered by unit and browser acceptance tests.
