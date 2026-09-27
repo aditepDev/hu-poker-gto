@@ -92,3 +92,4 @@ Timed Snap, solver-backed strategy grading, adaptive leak detection and
 continuous six-max cash/tournament sessions are not implemented in v2.1.
 
 The v2.2 card-face rendering is covered by unit and browser acceptance tests.
+Deployment of v2.2 remains gated by the full CI and browser checks.
