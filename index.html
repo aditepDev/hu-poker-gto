@@ -4,7 +4,7 @@
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#0c131c"><meta name="description" content="ฝึกอ่านตำแหน่ง 6-max คิดเป็น BB และวางแผน Pot ด้วยชิปฝึก ไม่ใช้เงินจริง">
   <title>Poker Lab — 6-max Practice</title>
-  <link rel="stylesheet" href="./practice.css?v=2.1.0">
+  <link rel="stylesheet" href="./practice.css?v=2.2.0">
 </head>
 <body>
   <div class="shell">
@@ -50,7 +50,7 @@
     </main>
   </div>
   <dialog id="settings-dialog" aria-labelledby="settings-title"><div class="dialog-head"><h2 id="settings-title">ตั้งค่าการฝึก</h2><button data-close class="ghost" autofocus>ปิด</button></div>
-    <p class="muted">v2.1 · 100 BB เริ่มต้น/คน · SB 0.5 / BB 1 · ไม่มี ante / rake</p>
+    <p class="muted">v2.2 · 100 BB เริ่มต้น/คน · SB 0.5 / BB 1 · ไม่มี ante / rake</p>
     <label for="mode">ตัวช่วย</label><select id="mode"><option value="learn">เรียนรู้ · เห็นผลก่อนยืนยัน</option><option value="practice">คิดเอง · เปิดตัวช่วยเมื่อจำเป็น</option><option value="shadow">ทดสอบ · รีวิวเมื่อจบมือ</option></select>
     <p class="muted">เปลี่ยนตัวช่วยได้โดยไม่เริ่มมือใหม่ · ไม่จับเวลา</p>
     <label for="scenario">เลือกสถานการณ์ใหม่</label><select id="scenario"><option value="mixed">ผสมทุกสถานการณ์</option></select><button id="load-scenario" class="primary wide-button">เริ่มสถานการณ์ที่เลือก</button>
@@ -62,6 +62,6 @@
     <section><h3>สถิติในเบราว์เซอร์นี้</h3><div class="progress-grid"><div><strong id="decisions-count">0</strong><span>ตัดสินใจ</span></div><div><strong id="hands-count">0</strong><span>มือที่จบ</span></div><div><strong id="skipped-count">0</strong><span>ข้ามก่อนจบ</span></div><div><strong id="math-count">—</strong><span>คำนวณถูก/ลอง</span></div></div><p id="save-status" class="muted">เก็บสถิติในเบราว์เซอร์นี้ ไม่เก็บข้ามเครื่อง</p><details><summary>จังหวะก่อนหน้า</summary><div id="recent"></div></details><button id="reset-progress" class="text-button">ล้างสถิติและประวัติ</button></section>
   </dialog>
   <noscript><p class="error">เกมต้องเปิด JavaScript กรุณาเปิดผ่าน Safari หรือ Chrome</p></noscript>
-  <script type="module" src="./src/practice/app.js?v=2.1.0"></script>
+  <script type="module" src="./src/practice/app.js?v=2.2.0"></script>
 </body>
 </html>

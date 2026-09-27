@@ -80,6 +80,9 @@ try:
         page.on('dialog',lambda d:d.accept())
         load(page)
         assert page.locator('.seat').count()==6
+        assert page.locator('#hero-cards .playing-card').count()==2,'Hero must render two real card faces'
+        assert page.locator('.seat.hero .playing-card').count()==2,'Hero seat must show two compact card faces'
+        assert page.locator('.seat:not(.hero):not(.folded) .card-back').count()>=2,'Hidden opponents use card backs'
         assert page.locator('#settings-dialog').is_hidden()
         assert page.locator('#review-dialog').is_hidden()
         assert page.locator('#pot').inner_text()=='6.5 BB'
@@ -191,7 +194,7 @@ try:
         assert not errors,errors
         print(json.dumps({'status':'PASS','scenarios_completed':len(ids),'mobile_decisions_without_action_scroll':10,
             'viewports':[[320,720],[390,844],[768,1000],[1366,1000],[390,520]],
-            'coverage':['BB arithmetic','live size preview','input validation','quiz answer privacy','shadow privacy','dialogs pause bots','double-tap guard','pending actor order','skip tracking','replay','HU regression'],
+            'coverage':['hole-card faces/pips','BB arithmetic','live size preview','input validation','quiz answer privacy','shadow privacy','dialogs pause bots','double-tap guard','pending actor order','skip tracking','replay','HU regression'],
             'transport':'inline ESM + CSS; persistence not tested' if INLINE else 'HTTP Pages subpath + persistent storage',
             'page_errors':errors},ensure_ascii=False))
         browser.close()

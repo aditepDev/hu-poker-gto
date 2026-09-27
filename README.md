@@ -1,4 +1,4 @@
-# Poker Lab — 6-max Practice v2.1
+# Poker Lab — 6-max Practice v2.2
 
 Practice poker decisions without real money. The main page is a Thai-first
 six-max scenario trainer; the original heads-up game remains at `hu.html`.
@@ -27,6 +27,10 @@ correctness. Scenario prefixes and illustrative hand pools are authored fixtures
 not solved ranges. Continuation bots use a lightweight heuristic and only their
 own cards plus public information. Legacy HU heuristic scores are explicitly
 labelled as a demonstration, not verified strategy grades.
+
+## New in v2.2
+
+Hole cards now render as real two-card faces. Numeric cards and aces use pip patterns, J/Q/K use a compact face treatment, red/black suits are distinct, hidden opponents use card backs, and the same component is used in the hero dock and visible table seats. This is a visual-recognition change only; poker rules and bot policy are unchanged.
 
 ## New in v2.1
 

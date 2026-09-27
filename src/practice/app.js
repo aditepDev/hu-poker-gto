@@ -3,6 +3,7 @@ import { SCENARIOS, makeScenario, practiceBot } from './scenarios.js';
 import { cardLabel, isRed, evaluateBest, handName, shuffle } from '../poker.js';
 import { freshProgress, loadProgress, saveProgress, mathCorrect, describeAction, reviewText } from './learning.js';
 import { MODE_LABELS, pendingAfter, actionSummary, contextSummary, sizePresets, parseBB, decisionKey, canShowPlan } from './ux.js';
+import { renderHoleCards, renderCardBacks, holeLabel } from './cards.js';
 
 const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -13,7 +14,7 @@ let paused=false,recorded=false,revealed=false,quizUsed=false,botSteps=0,bag=[];
 const mode = () => $('mode').value;
 const overlayOpen = () => $('settings-dialog').open || $('review-dialog').open;
 const signed = n => `${n>0?'+':''}${fmt(n)}`;
-const card = c => `<span class="card ${isRed(c)?'red':''}" aria-label="${esc(cardLabel(c))}"><span>${c[0]==='T'?'10':c[0]}</span><span class="suit">${cardLabel(c).slice(-1)}</span></span>`;
+const boardCard = c => `<span class="card ${isRed(c)?'red':''}" aria-label="${esc(cardLabel(c))}"><span>${c[0]==='T'?'10':c[0]}</span><span class="suit">${cardLabel(c).slice(-1)}</span></span>`;
 const seed = () => {const a=new Uint32Array(1);if(window.crypto?.getRandomValues){window.crypto.getRandomValues(a);return a[0];}return Math.floor(Math.random()*4294967296);};
 const handNames={'High Card':'ไพ่สูง','One Pair':'หนึ่งคู่','Two Pair':'สองคู่','Three of a Kind':'ตอง','Straight':'เรียง','Flush':'ฟลัช','Full House':'ฟูลเฮาส์','Four of a Kind':'โฟร์การ์ด','Straight Flush':'สเตรทฟลัช'};
 function save(){ $('save-status').textContent=saveProgress(storage,progress)?'บันทึกในเบราว์เซอร์นี้แล้ว · ไม่เก็บข้ามเครื่อง':'บันทึกไม่ได้ สถิติรอบนี้จะหายเมื่อปิดหน้า'; }
@@ -139,11 +140,11 @@ function render(){
   $('live-label').textContent=ended?'Pot ที่จ่ายเมื่อจบมือ':`${g.live.length} คนยังไม่หมอบ`;
   $('seats').innerHTML=g.players.map(p=>{
     const visible=p.id===spec.hero||(ended&&g.result.type==='showdown'&&!p.folded),acting=!ended&&g.toAct===p.id;
-    return `<div class="seat seat-${p.id} ${p.folded?'folded':''} ${p.id===spec.hero?'hero':''} ${acting?'acting':''}" data-seat="${p.id}" ${acting?'aria-current="true"':''}><div class="seat-top"><span class="seat-pos">${p.position}${p.id===3?'<span class="dealer">D</span>':''}</span><span class="seat-stack">${fmt(p.stack)}</span></div><div class="mini-cards">${visible?p.hole.map(c=>esc(cardLabel(c))).join(' '):p.folded?'—':'▰ ▰'}</div><span class="last">${p.folded?'หมอบ · Fold':!ended&&p.stack===0?'ALL-IN':esc(p.last||'ยังไม่เล่น')}</span><span class="badge">${acting?'ถึงตา ':''}${p.id===spec.hero?'คุณ':''}</span></div>`;
+    return `<div class="seat seat-${p.id} ${p.folded?'folded':''} ${p.id===spec.hero?'hero':''} ${acting?'acting':''}" data-seat="${p.id}" ${acting?'aria-current="true"':''}><div class="seat-top"><span class="seat-pos">${p.position}${p.id===3?'<span class="dealer">D</span>':''}</span><span class="seat-stack">${fmt(p.stack)}</span></div><div class="mini-cards">${visible?renderHoleCards(p.hole,{compact:true}):p.folded?'—':renderCardBacks(2,{compact:true})}</div><span class="last">${p.folded?'หมอบ · Fold':!ended&&p.stack===0?'ALL-IN':esc(p.last||'ยังไม่เล่น')}</span><span class="badge">${acting?'ถึงตา ':''}${p.id===spec.hero?'คุณ':''}</span></div>`;
   }).join('');
-  $('board').innerHTML=g.board.map(card).join('')+Array.from({length:5-g.board.length},()=>'<span class="card placeholder" aria-hidden="true"></span>').join('');
-  $('hero-position').textContent=`คุณ · ${hero.position}`;$('hero-cards').innerHTML=hero.hole.map(card).join('');
-  $('hand-name').textContent=g.board.length>=3?handNames[handName(evaluateBest([...hero.hole,...g.board]))]:'ไพ่เริ่มต้น';
+  $('board').innerHTML=g.board.map(boardCard).join('')+Array.from({length:5-g.board.length},()=>'<span class="card placeholder" aria-hidden="true"></span>').join('');
+  $('hero-position').textContent=`คุณ · ${hero.position}`;$('hero-cards').innerHTML=renderHoleCards(hero.hole);
+  $('hand-name').textContent=g.board.length>=3?handNames[handName(evaluateBest([...hero.hole,...g.board]))]:`ไพ่เริ่มต้น · ${holeLabel(hero.hole)}`;
   $('turn-status').textContent=ended?`ผลสุทธิ ${signed(g.result.net[spec.hero])}`:paused?'พักบอทไว้':g.toAct===spec.hero?'ถึงตาคุณ · ไม่ต้องรีบ':`${POSITIONS[g.toAct]} กำลังตัดสินใจ`;
   $('pause').textContent=paused?'เล่นต่อ':'พัก';$('pause').disabled=ended;$('pause').setAttribute('aria-label',paused?'เล่นบอทต่อ':'พักบอท');
   $('hand-result').hidden=!ended;$('end-controls').hidden=!ended&&!hero.folded;

@@ -34,3 +34,39 @@
   body[data-sizing=true] .seat.folded .seat-pos::after{content:' · หมอบ';font-size:8px;font-weight:400}
   body[data-sizing=true] .seat.acting .seat-pos::after{content:' ●';color:var(--accent)}
 }
+
+/* v2.2: real hole-card faces with pip patterns for faster visual recognition. */
+.hole-cards{display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.playing-card{position:relative;display:inline-block;width:48px;height:68px;flex:0 0 auto;border-radius:8px;background:#fbfaf6;color:#17212a;border:1px solid #e8e3d8;box-shadow:0 3px 8px #0004;overflow:hidden;font-style:normal}
+.playing-card.heart,.playing-card.diamond{color:#cf3443}
+.playing-card.spade,.playing-card.club{color:#111a20}
+.card-corner{position:absolute;z-index:2;display:flex;flex-direction:column;align-items:center;line-height:.9;font-style:normal}
+.card-corner b{font-size:11px}.card-corner i{font-size:9px;font-style:normal;margin-top:2px}
+.card-corner--tl{top:4px;left:4px}.card-corner--br{right:4px;bottom:4px;transform:rotate(180deg)}
+.pip-grid{position:absolute;inset:12px 9px;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(5,1fr);place-items:center}
+.pip{font-size:10px;line-height:1}.pip-r1{grid-row:1}.pip-r2{grid-row:2}.pip-r3{grid-row:3}.pip-r4{grid-row:4}.pip-r5{grid-row:5}.pip-c1{grid-column:1}.pip-c2{grid-column:2}.pip-c3{grid-column:3}
+.face-center{position:absolute;inset:12px 8px;display:flex;align-items:center;justify-content:center;gap:2px;font-style:normal;font-weight:800}
+.face-center b{font-size:20px}.face-center i{font-size:15px;font-style:normal}
+.card-back{border:2px solid #d7e2df;background:repeating-linear-gradient(45deg,#17354d 0,#17354d 4px,#245370 4px,#245370 8px);box-shadow:inset 0 0 0 2px #10283b,0 2px 6px #0004}
+.playing-card--mini{width:30px;height:42px;border-radius:5px}
+.playing-card--mini .card-corner b{font-size:8px}.playing-card--mini .card-corner i{font-size:7px;margin-top:1px}
+.playing-card--mini .card-corner--tl{top:2px;left:3px}.playing-card--mini .card-corner--br{right:3px;bottom:2px}
+.playing-card--mini .pip-grid{inset:7px 5px}.playing-card--mini .pip{font-size:6.5px}
+.playing-card--mini .face-center{inset:7px 4px}.playing-card--mini .face-center b{font-size:12px}.playing-card--mini .face-center i{font-size:9px}
+.mini-cards .hole-cards{gap:3px;min-height:44px}
+.hero-dock #hero-cards{min-width:104px}.hero-dock .hole-cards{gap:7px}
+.hero-dock .playing-card{width:46px;height:65px}
+.hero-dock .playing-card .pip{font-size:9.5px}
+@media(max-width:760px){
+  .playing-card{width:40px;height:58px}
+  .hero-dock #hero-cards{min-width:82px}.hero-dock .hole-cards{gap:4px}.hero-dock .playing-card{width:39px;height:56px}
+  .playing-card .card-corner b{font-size:10px}.playing-card .card-corner i{font-size:8px}
+  .playing-card .pip-grid{inset:10px 7px}.playing-card .pip{font-size:8px}
+  .playing-card .face-center b{font-size:17px}.playing-card .face-center i{font-size:13px}
+  .playing-card--mini{width:25px;height:35px}.playing-card--mini .pip-grid{inset:6px 4px}.playing-card--mini .pip{font-size:5.5px}
+  .mini-cards .hole-cards{min-height:36px}
+}
+@media(max-width:350px){
+  .playing-card--mini{width:22px;height:32px}.mini-cards .hole-cards{gap:2px}
+  .hero-dock #hero-cards{min-width:76px}.hero-dock .playing-card{width:36px;height:52px}
+}
